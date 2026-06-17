@@ -16,7 +16,7 @@ The application was created to solve a real operational problem during the annua
 
 ## Technology Stack
 
-* .NET 8
+* .NET 10
 * C#
 * Microsoft Playwright
 * Microsoft.Extensions.Hosting
@@ -25,7 +25,7 @@ The application was created to solve a real operational problem during the annua
 
 ## Requirements
 
-* .NET SDK 8.0 or newer
+* .NET SDK 10.0 or newer
 * Playwright browsers installed
 
 Install Playwright browsers:
@@ -37,7 +37,7 @@ playwright install
 or
 
 ```bash
-pwsh bin/Debug/net8.0/playwright.ps1 install
+pwsh bin/Debug/net10.0/playwright.ps1 install
 ```
 
 ## Configuration
@@ -47,15 +47,15 @@ Credentials should be provided through environment variables.
 ### Windows
 
 ```powershell
-$env:Usos__Username="your_username"
-$env:Usos__Password="your_password"
+$env:USOS__Username="your_username"
+$env:USOS__Password="your_password"
 ```
 
 ### Linux
 
 ```bash
-export Usos__Username="your_username"
-export Usos__Password="your_password"
+export USOS__Username="your_username"
+export USOS__Password="your_password"
 ```
 
 ## Running
@@ -68,7 +68,7 @@ The bot will:
 
 1. Open a Chromium browser.
 2. Navigate to the USOS applications page.
-3. Authenticate if required.
+3. Authenticate.
 4. Configure application filters.
 5. Load all available items.
 6. Process every application with the "przyjmij do rozpatrzenia" action.
