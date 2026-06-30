@@ -21,7 +21,8 @@ public sealed class ApplicationProcessor(
                 .CountAsync();
 
         logger.LogInformation("Found {Count} applications.", items);
-
+        logger.LogInformation("Processing applications...");
+        
         while (items-- > 0)
         {
             await AcceptNextApplicationAsync(page);
@@ -45,26 +46,31 @@ public sealed class ApplicationProcessor(
         await page.Locator(Selectors.ShowAllButton)
             .ClickAsync();
 
+        await page.WaitForTimeoutAsync(5000);
+        
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
     
     private async Task AcceptNextApplicationAsync(IPage page)
     {
-        logger.LogInformation("Processing application...");
-
         await page.GetByText(
                 "przyjmij do rozpatrzenia",
                 new() { Exact = true })
             .First
             .ClickAsync();
 
+        await page.WaitForTimeoutAsync(1000);
+        
         await page.GetByText(
                 "Powiadom wnioskodawcę wiadomością e-mail")
             .WaitForAsync();
 
         await page.Locator(Selectors.AcceptApplicationButton)
             .ClickAsync();
-
+        
+        await page.WaitForTimeoutAsync(1000);
+        
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 }
