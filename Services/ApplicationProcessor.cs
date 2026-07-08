@@ -34,7 +34,6 @@ public sealed class ApplicationProcessor(
             await AcceptNextFirstAcceptApplicationAsync(page);
         }
     }
-    
     private async Task ProcessFinalAcceptanceApplications(IPage page)
     {
         await ConfigureFiltersForFinalAcceptAsync(page);
@@ -50,7 +49,7 @@ public sealed class ApplicationProcessor(
         
         await AcceptFinalAcceptApplicationsAsync(page);
     }
-
+    
     private async Task ConfigureFiltersForFirstAcceptAsync(IPage page)
     {
         logger.LogInformation("Configuring filters...");
@@ -75,7 +74,6 @@ public sealed class ApplicationProcessor(
         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
-    
     private async Task ConfigureFiltersForFinalAcceptAsync(IPage page)
     {
         logger.LogInformation("Configuring filters...");
@@ -122,7 +120,6 @@ public sealed class ApplicationProcessor(
         
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
-    
     private async Task AcceptFinalAcceptApplicationsAsync(IPage page)
     {
         var rows = await page.Locator(Selectors.ApplicationsRows).AllAsync();
@@ -153,19 +150,43 @@ public sealed class ApplicationProcessor(
             
             await page.WaitForTimeoutAsync(1000);
             
-            // Just random text that loads and need to wait for table to be fully loaded
-            await page.GetByText(
-                "Dom studencki nr 1, Pokoje")
-            .WaitForAsync();
+            var polishLocator = page.GetByText("Dom studencki nr 1, Pokoje");
+            var englishLocator = page.GetByText("Dom studencki nr 1, Rooms");
+
+            string lang;
+
+            while (true)
+            {
+                if (await polishLocator.IsVisibleAsync())
+                {
+                    lang = "Pokoje";
+                    break;
+                }
+
+                if (await englishLocator.IsVisibleAsync())
+                {
+                    lang = "Rooms";
+                    break;
+                }
+
+                await Task.Delay(100);
+            }
             
             var dsRows = await page.Locator(Selectors.StudentsDormitoriesRows).AllAsync();
 
             logger.LogInformation("Found ds {RowsCount} rows", dsRows.Count);
 
             Students.IndexesDs.TryGetValue(userIndex, out var dormitory);
+            if (dormitory == null)
+            {
+                await page.Locator("#close").ClickAsync();
+                await page.PauseAsync();
+                continue;
+            }
+                
             foreach (var dsRow in dsRows)
             {
-                if (dormitory == null || await dsRow.GetByText(dormitory).CountAsync() != 1) 
+                if (await dsRow.GetByText($"{dormitory}, {lang}").CountAsync() != 1) 
                     continue;
                 
                 await dsRow.Locator(Selectors.SelectDormitoryButton).ClickAsync();
