@@ -189,7 +189,7 @@ public sealed class ApplicationProcessor(
                 if (await dsRow.GetByText($"{dormitory}, {lang}").CountAsync() != 1) 
                     continue;
                 
-                await dsRow.Locator(Selectors.SelectDormitoryButton).ClickAsync();
+                await dsRow.Locator($"[name='{Selectors.SelectDormitoryInputName}']").ClickAsync();
                 await page.WaitForTimeoutAsync(500);
                 
                 break;

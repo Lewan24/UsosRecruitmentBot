@@ -15,5 +15,5 @@ public static class Selectors
     public const string StudentIndex = "td:nth-child(2) > div";
     public const string StudentsDormitoriesRows =
         "#formularzZmianyStanu > span.parametr.prezenterWybierzWierszTabeliZlozony.edycja > table tbody tr";
-    public const string SelectDormitoryButton = "#_pwk_przyznany_ds_0";
+    public const string SelectDormitoryInputName = "_pwk_przyznany_ds";
 }
